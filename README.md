@@ -6,7 +6,7 @@
     <br>
 </p>
 
-This is symple example yii2 application with user authentication and saving user data in the file. Mysql not used in this case.
+This is the symple example yii2 application with user authentication and saving user data in the file. Mysql or another database not used in this case.
 
 Steps to install project:
 =========================
@@ -15,4 +15,10 @@ Steps to install project:
 * Run in console from root directory ```composer update```
 * Run in console from root directory ```php init```
 
-User data saved in file storage in this path: "common/filestorage/storage.json"
+Descriptions:
+=========================
+* User data saved in file storage in this path: __"common/filestorage/storage.json"__
+
+
+
+
