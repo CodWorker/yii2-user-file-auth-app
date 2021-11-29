@@ -56,24 +56,45 @@ class UserFile extends Component implements IdentityInterface
      * @return bool
      */
     public function save(){
-        $storage = self::getStorage();
-        $data = file_get_contents($storage);
-        $array = json_decode($data, TRUE);
+        $array = static::getArrayFromStorage();
         $array[$this->username] = [
             'username' => $this->username,
             'password_hash' => $this->password_hash,
         ];
-        // var_dump($array);exit;
-        $res = json_encode($array);
-        $r = file_put_contents($storage, $res);
-        $r !== false ? true : false;
+        $r = static::saveArrayToStorage($array);
         if($r){
-            $this->setCurrentUserName($this->username);
+            self::saveCurrentUserSession($this->username);
         }
         return $r;
     }
 
-    private function setCurrentUserName($name){
+    private static function getArrayFromStorage(){
+        $storage = self::getStorage();
+        $data = file_get_contents($storage);
+        return json_decode($data, TRUE);
+    }
+
+    private static function saveArrayToStorage($array){
+        $storage = self::getStorage();
+        $res = json_encode($array);
+        $r = file_put_contents($storage, $res);
+        return $r !== false ? true : false;
+    }
+
+    public static function logout(){
+        $session = Yii::$app->session;
+        $session->remove(self::CUSESSION);
+        
+    }
+
+    /**
+     * @param array $user
+     */
+    public static function login($user){
+        static::saveCurrentUserSession($user['username']);
+    }
+
+    private static function saveCurrentUserSession($name){
         $session = Yii::$app->session;
         $session->remove(self::CUSESSION);
         $session->set(self::CUSESSION, $name);
@@ -96,6 +117,22 @@ class UserFile extends Component implements IdentityInterface
     public function setPassword($password)
     {
         $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+    }
+
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return bool if password provided is valid for current user
+     */
+    public static function validatePassword($password, $password_hash)
+    {
+        return Yii::$app->security->validatePassword($password, $password_hash);
+    }
+
+    public static function findByUsername($username){
+        $array = static::getArrayFromStorage();
+        return isset($array[$username]) ? $array[$username] : null;
     }
 
     /**

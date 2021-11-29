@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use common\models\UserFile;
 
 AppAsset::register($this);
 ?>
@@ -40,7 +41,7 @@ AppAsset::register($this);
         // ['label' => 'About', 'url' => ['/site/about']],
         // ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
-    if (Yii::$app->user->isGuest) {
+    if (UserFile::hasCurrentUserNameInSession() === false) {
         $menuItems[] = ['label' => 'Home', 'url' => ['/site/index']];
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         // $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
@@ -48,7 +49,7 @@ AppAsset::register($this);
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
+                'Выход (' . UserFile::getCurrentUserNameFromSession() . ')',
                 ['class' => 'btn btn-link logout']
             )
             . Html::endForm()

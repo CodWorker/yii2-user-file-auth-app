@@ -9,11 +9,16 @@ use yii\bootstrap\ActiveForm;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
+
+
+// var_dump(Yii::$app->session->get('currentUser'));exit;
+
+
 ?>
 <div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to login:</p>
+    <p>Заполните поля для входа в личный кабинет:</p>
 
     <div class="row">
         <div class="col-lg-5">

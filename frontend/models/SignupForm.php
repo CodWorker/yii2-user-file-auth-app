@@ -20,7 +20,8 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            [['username', 'password'], 'safe']
+            [['username', 'password'], 'required'],
+            // [['username', 'password'], 'safe']
         ];
     }
 
