@@ -86,6 +86,7 @@ return [
     'in {delta, plural, =1{a year} other{# years}}' => 'через {delta, plural, =1{год} one{# год} few{# года} many{# лет} other{# года}}',
     'in {delta, plural, =1{an hour} other{# hours}}' => 'через {delta, plural, =1{час} one{# час} few{# часа} many{# часов} other{# часа}}',
     'Incorrect username or password.' => 'Некорректное имя пользователя или пароль.',
+    'Incorrect data.' => 'Неверные данные.',
     'just now' => 'прямо сейчас',
     'the input value' => 'введённое значение',
     '{attribute} "{value}" has already been taken.' => '{attribute} «{value}» уже занят.',

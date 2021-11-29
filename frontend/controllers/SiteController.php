@@ -83,6 +83,8 @@ class SiteController extends Controller
 
     }
 
+    
+
     /**
      * Logs in a user.
      *
@@ -93,6 +95,9 @@ class SiteController extends Controller
         // if (!Yii::$app->user->isGuest) {
         //     return $this->goHome();
         // }
+        if(UserFile::hasCurrentUserNameInSession() !== false){
+            return $this->redirect(['accaunt']);
+        }
 
         $model = new LoginForm();
         
@@ -127,6 +132,10 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
+        if(UserFile::hasCurrentUserNameInSession() !== false){
+            return $this->redirect(['accaunt']);
+        }
+        
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Вы успешно зарегестрировались. Добро пожаловать в ваш личный кабинет.');

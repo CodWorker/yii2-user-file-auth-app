@@ -13,6 +13,7 @@ class LoginForm extends Model
     public $username;
     public $password;
     // public $rememberMe = true;
+    public $waitTime = (60 * 5);
 
     private $_user;
 
@@ -25,10 +26,10 @@ class LoginForm extends Model
         return [
             // username and password are both required
             [['username', 'password'], 'required'],
+            ['password', 'validatePassword'],
+            [['username', 'password'], 'expTime'],
             // rememberMe must be a boolean value
             // ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
-            ['password', 'validatePassword'],
         ];
     }
 
@@ -52,9 +53,63 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !UserFile::validatePassword($this->password, $user['password_hash'])) {
-                $this->addError($attribute, \Yii::t('app', 'Incorrect username or password.'));
+                $this->addError($attribute, \Yii::t('app', 'Incorrect data.'));
             }
         }
+    }
+
+    public function expTime($attribute, $params)
+    {
+        $user = $this->getUser();
+        if (!$user || !UserFile::validatePassword($this->password, $user['password_hash'])) {
+            
+            //Time limit
+            ////////////////////////////
+            $session = Yii::$app->session;
+            if (!$session->has('expTime')){
+                $session->set('expTime', 0);
+            }
+            $achivedLimit = static::counterErrorLogin();
+            
+            if($achivedLimit){
+                if($session->get('expTime') == 0){
+                    $session->set('expTime', time() + $this->waitTime);
+                }
+                
+                if(time() < $session->get('expTime')){
+                    $sec = $session->get('expTime') - time();
+                    $this->addError($attribute, \Yii::t('app', 'Попробуйте еще раз через {$sec}секунд(ы)'));
+                    \Yii::$app->session->setFlash('expTimeMessage', "Попробуйте еще раз через {$sec} секунд(ы)");
+                    return false;
+                }else{
+                    self::clearLimit();
+                    $session->remove('expTime');
+                }
+            }
+        }
+    }
+
+    private static function counterErrorLogin($moreThen = 3){
+        $session = Yii::$app->session;
+        $sName = 'counterErrorLogin';
+        if (!$session->has($sName)){
+            $session->set($sName, 1);
+        }
+        
+        $curCount = $session->get($sName);
+        if($curCount > $moreThen){
+            return true;
+        }else{
+            $session->set($sName, $curCount + 1);
+            
+            return false;
+        }
+    }
+
+    private static function clearLimit(){
+        $session = Yii::$app->session;
+        $sName = 'counterErrorLogin';
+        $session->remove($sName);
     }
 
     /**
