@@ -32,6 +32,14 @@ class LoginForm extends Model
         ];
     }
 
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Имя пользователя',
+            'password' => 'Пароль',
+        ];
+    }
+
     /**
      * Validates the password.
      * This method serves as the inline validation for password.
@@ -44,7 +52,7 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !UserFile::validatePassword($this->password, $user['password_hash'])) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, \Yii::t('app', 'Incorrect username or password.'));
             }
         }
     }

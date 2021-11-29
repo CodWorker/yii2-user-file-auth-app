@@ -13,6 +13,7 @@ class SignupForm extends Model
     public $username;
     public $password;
 
+    private $_user;
 
     /**
      * {@inheritdoc}
@@ -21,8 +22,27 @@ class SignupForm extends Model
     {
         return [
             [['username', 'password'], 'required'],
+            ['username', 'checkIsUniqUserName'],
             // [['username', 'password'], 'safe']
         ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'username' => 'Имя пользователя',
+            'password' => 'Пароль',
+        ];
+    }
+
+    public function checkIsUniqUserName($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+            if ($user) {
+                $this->addError($attribute, 'Пользователь с данным именем уже зарегестрирован.');
+            }
+        }
     }
 
     /**
@@ -45,5 +65,13 @@ class SignupForm extends Model
 
     }
 
-   
+    protected function getUser()
+    {
+        if ($this->_user === null) {
+            $this->_user = UserFile::findByUsername($this->username);
+        }
+
+        return $this->_user;
+    }
+
 }

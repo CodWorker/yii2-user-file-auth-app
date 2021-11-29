@@ -75,7 +75,12 @@ class SiteController extends Controller
      */
     public function actionAccaunt()
     {
+        if(UserFile::hasCurrentUserNameInSession() === false){
+            return $this->redirect(['index']);
+        }
+
         return $this->render('accaunt');
+
     }
 
     /**
@@ -90,6 +95,7 @@ class SiteController extends Controller
         // }
 
         $model = new LoginForm();
+        
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             Yii::$app->session->setFlash('success', 'Вы зашли в свой кабинет.');
             return $this->redirect(["accaunt"], $statusCode = 302);
